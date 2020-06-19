@@ -167,6 +167,27 @@ let g:netrw_sizestyle='H'
 let g:netrw_timefmt='%Y/%m/%d(%a) %H:%M:%S'
 " }}}
 
+" fern
+nnoremap <silent> <Leader>f :Fern . -drawer<CR>
+augroup fern-setteings
+  autocmd! *
+  autocmd FileType fern nnoremap <silent> q ::bw!<CR>
+augroup END
+
+let g:fern#renderer = "devicons"
+
+" fzf settings {{{
+" ファイル一覧を出すときにプレビュー表示
+command! -bang -nargs=? -complete=dir Files
+      \ call fzf#vim#files(<q-args>, fzf#vim#with_preview(), <bang>0)
+
+nnoremap <C-P> :Files<CR>
+" }}}
+
+" {{{ lexima
+let g:lexima_enable_basic_rules = 1
+" }}}
+
 " 拡張子ごとのインデント設定 {{{
 augroup fileTypeIndent
   autocmd!
@@ -360,11 +381,74 @@ set wrapscan
 
 " }}}
 
+" gina
+nnoremap <silent> gs :Gina status<CR>
+nnoremap <silent> gl :Gina log<CR>
+call gina#custom#mapping#nmap(
+      \ 'status', 'gp',
+      \ ':<C-u>Gina push<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', 'cm',
+      \ ':<C-u>Gina commit<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', 'ca',
+      \ ':<C-u>Gina commit --amend<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', 'dp',
+      \ '<Plug>(gina-patch-oneside-tab)',
+      \ {'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', 'q',
+      \ ':<C-u>bw!<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'status', 'ga',
+      \ '--',
+      \ {'silent': 1},
+      \)
+call gina#custom#mapping#vmap(
+      \ 'status', 'ga',
+      \ '--',
+      \ {'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'log', 'q',
+      \ ':<C-u>bw!<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'log', 'dd',
+      \ '<Plug>(gina-changes-of)',
+      \ {'silent': 1},
+      \)
+call gina#custom#mapping#nmap(
+      \ 'changes', 'q',
+      \ ':<C-u>bw!<CR>',
+      \ {'noremap': 1, 'silent': 1},
+      \)
+
 
 " key mappings {{{
 
 "ノーマルモードからjjで離脱
 inoremap <silent> jj <ESC>
+"っj からうまく離脱する処理達 {{{
+inoremap <silent> っj <C-o>:call <SID>disableIme()<CR><ESC>
+function! s:disableIme()
+    if has('mac')
+        call job_start(['osascript', '-e', 'tell application "System Events" to key code {102}'],
+                    \ {'in_io': 'null', 'out_io': 'null', 'err_io': 'null'})
+    endif
+endfunction
+" }}}
 
 " <Leader>というプレフィックスキーにスペースを使用する
 let g:mapleader = "\<Space>"
@@ -448,7 +532,10 @@ let g:user_emmet_leader_key = '<C-g>'
 augroup emmet
   autocmd!
   au FileType vue,html,javascript,css,scss,php EmmetInstall
-  au FileType vue,html,javascript,css,scss,php imap <buffer> <C-f> <plug>(emmet-expand-abbr)
+  au FileType vue,html,css,scss,php imap <buffer> <C-f> <plug>(emmet-expand-abbr)
 augroup END
 " }}}
 
+" {{{ vista
+let g:vista_default_executive = 'vim_lsp'
+" }}}
