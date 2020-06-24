@@ -61,7 +61,6 @@ endif
 " }}}
 
 " general settings {{{
-
 " ミュート {{{
 set belloff=all
 " }}}
@@ -176,6 +175,55 @@ augroup END
 
 let g:fern#renderer = "devicons"
 
+" vim-go settings {{{
+nnoremap <silent><leader>r :QuickRun<CR>
+" ファイル保存時go importを実行する
+let g:go_fmt_command = 'goimports'
+
+" goplsを有効化
+let g:go_gopls_enabled = 1
+
+" ファイル保存時、linterを実行する
+"let g:go_metalinter_autosave = 1
+
+" linter実行時、go vetのみを実行する
+"let g:go_metalinter_autosave_enabled = ['vet']
+
+" golangci-lintを使う
+"let g:go_metalinter_command = "golangci-lint"
+
+" vim-lspを使用するので、vim-goの`Ctrl+]`を無効にする
+let g:go_def_mapping_enabled = 0
+
+" GoDocでポップアップウィンドウを使用する
+"let g:go_doc_popup_window = 1
+
+" GoRunやGoTest時の画面分割方法変更
+let g:go_term_mode = 'split'
+
+" テンプレート作成を無効化
+let g:go_template_autocreate = 0
+
+" すでに開いているバッファに定義ジャンプする
+let g:go_def_reuse_buffer = 1
+
+" {{{ gofmtmd
+let g:gofmtmd_auto_fmt = 0
+" }}}
+
+"let g:go_fold_enable = ['block', 'import', 'varconst', 'package_comment']
+
+" key mapping
+"augroup goMapping
+"    autocmd!
+"    au FileType go set foldmethod=syntax
+"augroup END
+autocmd FileType go nmap <leader>b  <Plug>(go-build)
+"autocmd FileType go nmap <leader>r  <Plug>(go-run)
+au FileType go nmap <leader>s <Plug>(go-def-split)
+au FileType go nmap <leader>v <Plug>(go-def-vertical)
+" }}}
+
 " fzf settings {{{
 " ファイル一覧を出すときにプレビュー表示
 command! -bang -nargs=? -complete=dir Files
@@ -216,6 +264,17 @@ augroup grepwindow
   au!
   au QuickFixCmdPost *grep* cwindow
 augroup END
+" }}}
+
+" quickfix widowの移動{{{
+" 前へ
+nnoremap [q :cprevious<CR>
+" 次へ
+nnoremap ]q :cnext<CR>
+" 最初へ
+nnoremap [Q :<C-u>cfirst<CR>
+" 最後へ
+nnoremap ]Q :<C-u>clast<CR>
 " }}}
 
 " カーソルラインの位置を保存する {{{
