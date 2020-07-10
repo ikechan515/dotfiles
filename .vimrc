@@ -81,7 +81,8 @@ syntax enable
 
 " カラースキームを使う {{{
 set background=dark
-colorscheme solarized 
+"colorscheme solarized 
+colorscheme iceberg
 " }}}
 
 " ファイル形式別プラグインとインデントを有効にする {{{
@@ -177,6 +178,15 @@ let g:fern#renderer = "devicons"
 
 " vim-go settings {{{
 nnoremap <silent><leader>r :QuickRun<CR>
+"let g:quickrun_config = {
+"\   "_" : {
+"\       "outputter/buffer/split" : ":botright",
+"\       "outputter/buffer/close_on_empty" : 1
+"\   },
+"\}
+set splitbelow "新しいウィンドウを下に開く
+set splitright "新しいウィンドウを右に開く
+
 " ファイル保存時go importを実行する
 let g:go_fmt_command = 'goimports'
 
@@ -597,4 +607,24 @@ augroup END
 
 " {{{ vista
 let g:vista_default_executive = 'vim_lsp'
+" }}}
+
+" sonictemplate.vim {{{
+let g:sonictemplate_vim_template_dir = expand('~/.vim/template')
+imap <silent> <C-l> <plug>(sonictemplate-postfix)
+" }}}
+
+" {{{ devicons setting
+"set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
+set encoding=utf-8
+" フォルダアイコンを表示
+let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
+let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
+" after a re-source, fix syntax matching issues (concealing brackets):
+if exists('g:loaded_webdevicons')
+  call webdevicons#refresh()
+endif
+" }}}
+" {{{ fern icon setting
+let g:fern#renderer = "devicons"
 " }}}
