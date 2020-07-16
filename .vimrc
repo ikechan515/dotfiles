@@ -713,6 +713,13 @@ function! s:www(word) abort
 endfunction
 
 command! -nargs=1 WWW call s:www(<f-args>)
+
+" tig 
+function! s:tig() abort
+  execute('vert term ++close tig')
+endfunction
+
+command! Tig call s:tig()
 "====================================================================================================
 " 自作関数 ENd
 "====================================================================================================
