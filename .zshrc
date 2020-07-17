@@ -4,11 +4,25 @@ export PATH=$HOME/.nodebrew/current/bin:$PATH
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 
 ##### zsh の設定 #####
-# プロンプト表示設定 (oh-my-zsh のテーマカラーを上書きするため不要ならコメントアウト)
-PROMPT='%~ %# '
-
-# zsh-completions の設定。コマンド補完機能
-autoload -U compinit && compinit -u
+## git
+autoload -Uz vcs_info
+setopt prompt_subst
+zstyle ':vcs_info:git:*' check-for-changes true
+zstyle ':vcs_info:git:*' stagedstr "%F{magenta}!"
+zstyle ':vcs_info:git:*' unstagedstr "%F{yellow}+"
+zstyle ':vcs_info:*' formats "%F{cyan}%c%u[%b]%f"
+zstyle ':vcs_info:*' actionformats '[%b|%a]'
+precmd () { vcs_info }
+# プロンプトカスタマイズ
+PROMPT='
+%F{green}%~%f%F{cyan} $vcs_info_msg_0_%f
+%F{yellow}$%f '
+# 補完機能を有効にする
+autoload -Uz compinit
+compinit -u
+if [ -e /usr/local/share/zsh-completions ]; then
+  fpath=(/usr/local/share/zsh-completions $fpath)
+fi
 
 # git のカラー表示
 git config --global color.ui auto
@@ -55,7 +69,7 @@ alias gst='git stash'
 alias gsl='git stash list'
 alias gsu='git stash -u'
 alias gsp='git stash pop'
-alias ftp='git archive HEAD `git diff --name-only --diff-filter=MARC HEAD~1 HEAD` --prefix="`date +%Y%m%d`/" -o "\!abc/`date +%Y%m%d`_01.zip"'
+alias ftp='(){git archive HEAD `git diff --name-only --diff-filter=MARC HEAD~$1 HEAD` --prefix="`date +%Y%m%d`/" -o \!abc/`date +%Y%m%d`_01.zip}'
 
 # 色を使用出来るようにする
 autoload -Uz colors
@@ -130,7 +144,6 @@ setopt extended_glob
 # ※ たとえば Ctrl-W でカーソル前の1単語を削除したとき / までで削除が止まる
 WORDCHARS='*?_-.[]~=&;!#$%^(){}<>'
 export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
