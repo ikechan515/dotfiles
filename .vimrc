@@ -90,7 +90,7 @@ filetype plugin indent on
 
 " バックスペースとCtrl+hで削除を有効にする
 set backspace=2
- 
+
 " 改行時自動インデント
 set smartindent
 set autoindent
@@ -171,11 +171,33 @@ augroup END
 " wildmenuを有効にする
 set wildmenu
 
+" ripgrepがあればgrep時に使用する
+if executable('rg')
+    let &grepprg = 'rg --vimgrep --hidden'
+    set grepformat=%f:%l:%c:%m
+endif
+
 " grepした結果をquickfixに表示する
 augroup grepwindow
   au!
   au QuickFixCmdPost *grep* cwindow
 augroup END
+
+" quickfixの表示・非表示を切り替える
+if exists('g:__QUICKFIX_TOGGLE__')
+  finish
+endif
+let g:__QUICKFIX_TOGGLE__ = 1
+
+function! ToggleQuickfix()
+  let l:nr = winnr('$')
+  cwindow
+  let l:nr2 = winnr('$')
+  if l:nr == l:nr2
+    cclose
+  endif
+endfunction
+nnoremap <script> <silent> <Leader>o :call ToggleQuickfix()<CR>
 
 " カーソルラインの位置を保存する
 augroup cursorlineRestore
@@ -339,10 +361,10 @@ inoremap <silent> jj <ESC>
 "っj からうまく離脱する処理達
 inoremap <silent> っj <C-o>:call <SID>disableIme()<CR><ESC>
 function! s:disableIme()
-    if has('mac')
-        call job_start(['osascript', '-e', 'tell application "System Events" to key code {102}'],
-                    \ {'in_io': 'null', 'out_io': 'null', 'err_io': 'null'})
-    endif
+  if has('mac')
+    call job_start(['osascript', '-e', 'tell application "System Events" to key code {102}'],
+          \ {'in_io': 'null', 'out_io': 'null', 'err_io': 'null'})
+  endif
 endfunction
 
 " *でカーソルを移動しないようにする
@@ -459,10 +481,10 @@ set termwinkey=<C-g>
 " ----------------------------------------
 nnoremap <silent><leader>r :QuickRun<CR>
 "let g:quickrun_config = {
-"\   "_" : {
-"\       "outputter/buffer/split" : ":botright",
-"\       "outputter/buffer/close_on_empty" : 1
-"\   },
+      "\   "_" : {
+      "\       "outputter/buffer/split" : ":botright",
+      "\       "outputter/buffer/close_on_empty" : 1
+      "\   },
 "\}
 set splitbelow "新しいウィンドウを下に開く
 set splitright "新しいウィンドウを右に開く
@@ -658,9 +680,13 @@ let g:fern#renderer = "devicons"
 " vim-easymotion
 " ----------------------------------------
 
+map <Leader> <Plug>(easymotion-prefix)
+let g:EasyMotion_do_mapping = 0 " Disable default mappings
+map <Leader>j <Plug>(easymotion-w)
+nmap <Leader>j <Plug>(easymotion-w)
 " 二文字検索ジャンプ
-map <leader>j <Plug>(easymotion-bd-f2)
-nmap <leader>j <Plug>(easymotion-overwin-f2)
+"map <leader>j <Plug>(easymotion-bd-f2)
+"nmap <leader>j <Plug>(easymotion-overwin-f2)
 " 行ジャンプ
 map <leader>l <Plug>(easymotion-bd-jk)
 nmap <leader>l <Plug>(easymotion-overwin-line)
