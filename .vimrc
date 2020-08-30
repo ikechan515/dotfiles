@@ -13,7 +13,7 @@ scriptencoding utf-8
 " dein.vim 設定
 "====================================================================================================
 " install dir {{{
-let s:dein_dir = expand('~/.cache/dein')
+let s:dein_dir = expand('~/.cache/vim/dein')
 let s:dein_repo_dir = s:dein_dir . '/repos/github.com/Shougo/dein.vim'
 " }}}
 
@@ -82,8 +82,8 @@ syntax enable
 
 " カラースキームを使う
 set background=dark
-"colorscheme solarized 
 colorscheme iceberg
+"colorscheme jellybeans
 
 " ファイル形式別プラグインとインデントを有効にする
 filetype plugin indent on
@@ -627,7 +627,7 @@ augroup END
 " vista
 " ----------------------------------------
 
-let g:vista_default_executive = 'vim_lsp'
+"let g:vista_default_executive = 'vim_lsp'
 
 " ----------------------------------------
 " end vista
@@ -648,15 +648,15 @@ imap <silent> <C-l> <plug>(sonictemplate-postfix)
 " devicons
 " ----------------------------------------
 
-"set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
-set encoding=utf-8
-" フォルダアイコンを表示
-let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
-let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
-" after a re-source, fix syntax matching issues (concealing brackets):
-if exists('g:loaded_webdevicons')
-  call webdevicons#refresh()
-endif
+""set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
+"set encoding=utf-8
+"" フォルダアイコンを表示
+"let g:WebDevIconsNerdTreeBeforeGlyphPadding = ""
+"let g:WebDevIconsUnicodeDecorateFolderNodes = v:true
+"" after a re-source, fix syntax matching issues (concealing brackets):
+"if exists('g:loaded_webdevicons')
+"  call webdevicons#refresh()
+"endif
 
 " ----------------------------------------
 " end devicons
@@ -665,13 +665,110 @@ endif
 " ----------------------------------------
 " fern
 " ----------------------------------------
-nnoremap <silent> <Leader>f :Fern . -drawer<CR>
+function! s:smart_path() abort
+  if !empty(&buftype) || bufname('%') =~# '^[^:]\+://'
+    return fnamemodify('.', ':p')
+  endif
+  return fnamemodify(expand('%'), ':p:h')
+endfunction
+
+nnoremap <silent> <Leader>F :<C-u>Fern <C-r>=<SID>smart_path()<CR> -drawer -toggle -reveal=%<CR>
+nnoremap <silent> <Leader>f :<C-u>Fern . -drawer -toggle -reveal=%<CR>
+nnoremap <silent> <Leader>ii :<C-u>Fern bookmark:///<CR>
+nnoremap <silent> <Leader>JJ :<C-u>Fern <C-r>=expand(g:junkfile#directory)<CR> -wait<CR>:<C-u>execute "normal fa"<CR>
+nnoremap <silent> <Leader>KK :<C-u>Fern . -wait<CR>:<C-u>execute "normal fa"<CR>
+
+function! s:fern_init() abort
+  if has('mac') && !exists('$SSH_CONNECTION')
+    let g:fern#renderer = 'nerdfont'
+  endif
+  let g:fern#keepalt_on_edit = 1
+  let g:fern#loglevel = g:fern#DEBUG
+endfunction
+
+function! s:fern_local_init() abort
+  nmap <buffer>
+        \ <Plug>(fern-my-enter-and-tcd)
+        \ <Plug>(fern-action-enter)<Plug>(fern-wait)<Plug>(fern-action-tcd:root)
+  nmap <buffer>
+        \ <Plug>(fern-my-leave-and-tcd)
+        \ <Plug>(fern-action-leave)<Plug>(fern-wait)<Plug>(fern-action-tcd:root)
+  nmap <buffer><expr>
+        \ <Plug>(fern-my-open-or-enter-and-tcd)
+        \ fern#smart#leaf(
+        \   "\<Plug>(fern-action-open)",
+        \   "\<Plug>(fern-my-enter-and-tcd)",
+        \ )
+  nmap <buffer><expr>
+        \ <Plug>(fern-my-open-or-enter)
+        \ fern#smart#drawer(
+        \   "\<Plug>(fern-my-open-or-enter-and-tcd)",
+        \   "\<Plug>(fern-action-open-or-enter)",
+        \ )
+  nmap <buffer><expr>
+        \ <Plug>(fern-my-leave)
+        \ fern#smart#drawer(
+        \   "\<Plug>(fern-my-leave-and-tcd)",
+        \   "\<Plug>(fern-action-leave)",
+        \ )
+  nmap <buffer><nowait> <Return>    <Plug>(fern-my-open-or-enter)
+  nmap <buffer><nowait> <C-m>       <Plug>(fern-my-open-or-enter)
+  nmap <buffer><nowait> <Backspace> <Plug>(fern-my-leave)
+  nmap <buffer><nowait> <C-h>       <Plug>(fern-my-leave)
+
+  nmap <buffer><nowait> ~ :<C-u>Fern ~<CR>
+
+
+  " Define NERDTree like mappings
+  nmap <buffer> o <Plug>(fern-action-open:edit)
+  nmap <buffer> go <Plug>(fern-action-open:edit)<C-w>p
+  nmap <buffer> <C-t> <Plug>(fern-action-open:tabedit)
+  "nmap <buffer> T <Plug>(fern-action-open:tabedit)gT
+  "nmap <buffer> i <Plug>(fern-action-open:split)
+  "nmap <buffer> gi <Plug>(fern-action-open:split)<C-w>p
+  nmap <buffer> <C-v> <Plug>(fern-action-open:vsplit)
+  "nmap <buffer> gs <Plug>(fern-action-open:vsplit)<C-w>p
+  nmap <buffer> ma <Plug>(fern-action-new-path)
+  nmap <buffer> P gg
+
+  nmap <buffer> C <Plug>(fern-action-enter)
+  nmap <buffer> u <Plug>(fern-action-leave)
+  nmap <buffer> r <Plug>(fern-action-reload)
+  nmap <buffer> R gg<Plug>(fern-action-reload)<C-o>
+  nmap <buffer> cd <Plug>(fern-action-cd)
+  nmap <buffer> CD gg<Plug>(fern-action-cd)<C-o>
+
+  nmap <buffer> I <Plug>(fern-action-hide-toggle)
+
+  nmap <buffer> q :<C-u>quit<CR>
+endfunction
+
 augroup fern-setteings
   autocmd! *
-  autocmd FileType fern nnoremap <silent> q ::bw!<CR>
+  "autocmd FileType fern nnoremap <silent> q ::bw!<CR>
+  autocmd FileType fern call s:fern_local_init()
+  autocmd VimEnter * call s:fern_init()
 augroup END
 
-let g:fern#renderer = "devicons"
+
+let g:loaded_netrw             = 1
+let g:loaded_netrwPlugin       = 1
+let g:loaded_netrwSettings     = 1
+let g:loaded_netrwFileHandlers = 1
+
+function! s:hijack_directory() abort
+  let path = expand('%:p')
+  if !isdirectory(path)
+    return
+  endif
+  bwipeout %
+  execute printf('Fern %s', fnameescape(path))
+endfunction
+
+augroup my-fern-hijack
+  autocmd!
+  autocmd BufEnter * ++nested call s:hijack_directory()
+augroup END
 " ----------------------------------------
 " end fern
 " ----------------------------------------
@@ -682,8 +779,8 @@ let g:fern#renderer = "devicons"
 
 map <Leader> <Plug>(easymotion-prefix)
 let g:EasyMotion_do_mapping = 0 " Disable default mappings
-map <Leader>j <Plug>(easymotion-w)
-nmap <Leader>j <Plug>(easymotion-w)
+map <Leader>j <Plug>(easymotion-s)
+nmap <Leader>j <Plug>(easymotion-s)
 " 二文字検索ジャンプ
 "map <leader>j <Plug>(easymotion-bd-f2)
 "nmap <leader>j <Plug>(easymotion-overwin-f2)
@@ -717,7 +814,6 @@ let g:lexima_enable_basic_rules = 1
 " ----------------------------------------
 " lexima
 " ----------------------------------------
-
 "====================================================================================================
 " 各プラグイン設定 END
 "====================================================================================================
