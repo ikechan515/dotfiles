@@ -67,9 +67,9 @@ bind main    F      ?git fetch %(remote)
 bind generic U      ?git pull %(remote)
 
 # set key 'C'
-bind generic c      none
+bind generic c      !git commit
 bind refs    c      ?git checkout %(branch)
-bind main    c      !git commit
+bind main    c      none
 
 # set key "n"
 bind branch N !git checkout -b %(prompt) %(branch)
