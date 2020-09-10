@@ -27,12 +27,12 @@ set log-view    = line-number:yes,interval=1 text
 set blob-view   = line-number:yes,interval=1 text
 set diff-view   = line-number:yes,interval=1 text:yes,commit-title-overflow=no
 
-# set vertical-split = yes
-set vertical-split = no
-# set vertical-split = auto
+set vertical-split = yes
+#set vertical-split = no
+#set vertical-split = auto
 
 set line-graphics = utf-8
-# set tab-size = 4
+#set tab-size = 4
 set tab-size = 2
 # set ignore-space = all
 set ignore-space = at-eol
@@ -45,10 +45,9 @@ set refresh-mode = auto
 #set refresh-mode = after-command
 #set refresh-mode = periodic
 #set refresh-interval = 1
-set diff-highlight = true
 
-color diff-header       default red
-color diff-chunk        black   white
+#これ設定するとdiffが見れない
+#set diff-highlight = true
 
 # set key 'g' / goto file top
 bind generic g      move-first-line
@@ -68,17 +67,9 @@ bind main    F      ?git fetch %(remote)
 bind generic U      ?git pull %(remote)
 
 # set key 'C'
-bind generic C      !git commit
-#bind refs    C      !git commit
-bind main    C      !git commit
+bind generic c      none
+bind refs    c      ?git checkout %(branch)
+bind main    c      !git commit
 
 # set key "n"
 bind branch N !git checkout -b %(prompt) %(branch)
-
-# set key 'P'
-bind generic P      ?git push -u %(remote) %(repo:head)
-
-# set key 'M'
-bind main    M      ?git merge %(branch)
-bind diff    M      ?git merge %(branch)
-bind refs    M      ?git merge %(branch)
