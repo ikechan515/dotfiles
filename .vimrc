@@ -84,7 +84,16 @@ syntax enable
 set background=dark
 colorscheme iceberg
 "colorscheme jellybeans
-
+"if (empty($TMUX))
+"  if (has("nvim"))
+"    let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+"  endif
+"  if (has("termguicolors"))
+"    set termguicolors
+"  endif
+"endif
+"syntax on
+"colorscheme onedark
 " ファイル形式別プラグインとインデントを有効にする
 filetype plugin indent on
 
@@ -537,7 +546,53 @@ au FileType go nmap <leader>v <Plug>(go-def-vertical)
 " ----------------------------------------
 " end vim-go
 " ----------------------------------------
+" lsp settings {{{
+let g:lsp_signs_error = {'text': 'ｳﾎ'}
+let g:lsp_signs_warning = {'text': '🍌'}
+let g:lsp_diagnostics_float_cursor = 1
+"let g:lsp_log_file = expand('~/vim-lsp.log')
+let g:lsp_log_file = ''
 
+nmap <Leader>ho <plug>(lsp-hover)
+nnoremap <silent> <C-]> :LspDefinition<CR>
+
+let g:lsp_settings = {
+      \ 'gopls': {
+      \  'workspace_config': {
+      \    'usePlaceholders': v:true,
+      \    'analyses': {
+      \      'fillstruct': v:true,
+      \    },
+      \  },
+      \  'initialization_options': {
+      \    'usePlaceholders': v:true,
+      \    'analyses': {
+      \      'fillstruct': v:true,
+      \    },
+      \  },
+      \ },
+      \ 'eslint-language-server': {
+      \   'allowlist': ['javascript', 'typescript', 'vue'],
+      \ },
+      \ 'efm-langserver': {
+      \   'disabled': 0,
+      \   'allowlist': ['markdown'],
+      \  }
+      \}
+
+let g:lsp_settings_filetype_typescript = ['typescript-language-server', 'eslint-language-server']
+
+function! s:on_lsp_buffer_enabled() abort
+  setlocal completeopt=menu
+  setlocal omnifunc=lsp#complete
+  let g:lsp_settings_root_markers = ['go.mod'] + g:lsp_settings_root_markers
+endfunction
+
+augroup lsp_install
+  au!
+  au User lsp_buffer_enabled call s:on_lsp_buffer_enabled()
+augroup END
+" }}}
 " ----------------------------------------
 " gina
 " ----------------------------------------
@@ -845,3 +900,18 @@ command! Tig call s:tig()
 "====================================================================================================
 " 自作関数 ENd
 "====================================================================================================
+" let g:floaterm_wintype='normal'
+" let g:floaterm_height=6
+
+let g:floaterm_keymap_toggle = '<C-t>'
+let g:floaterm_keymap_next   = '<F2>'
+let g:floaterm_keymap_prev   = '<F3>'
+let g:floaterm_keymap_new    = '<F4>'
+
+" Floaterm
+let g:floaterm_gitcommit='floaterm'
+let g:floaterm_autoinsert=1
+let g:floaterm_width=0.8
+let g:floaterm_height=0.8
+let g:floaterm_wintitle=0
+let g:floaterm_autoclose=1

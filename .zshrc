@@ -69,7 +69,8 @@ alias gst='git stash'
 alias gsl='git stash list'
 alias gsu='git stash -u'
 alias gsp='git stash pop'
-alias ftp='(){git archive HEAD `git diff --name-only --diff-filter=MARC HEAD~$1 HEAD` --prefix="`date +%Y%m%d`/" -o \!abc/`date +%Y%m%d`_01.zip}'
+alias ftp='git archive HEAD `git diff --name-only --diff-filter=MARC HEAD~$1 HEAD` --prefix="`date +%Y%m%d`/" -o \!abc/`date +%Y%m%d`_01.zip'
+alias mapinfo='~/.scripts/web/gmap/map.sh'
 
 # 色を使用出来るようにする
 autoload -Uz colors

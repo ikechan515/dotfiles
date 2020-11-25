@@ -49,6 +49,9 @@ set refresh-mode = auto
 #これ設定するとdiffが見れない
 #set diff-highlight = true
 
+# set key 'P'
+bind generic P      ?git push -u %(remote) %(repo:head)
+
 # set key 'g' / goto file top
 bind generic g      move-first-line
 
@@ -73,3 +76,8 @@ bind main    c      none
 
 # set key "n"
 bind branch N !git checkout -b %(prompt) %(branch)
+
+# set key 'M'
+bind main    M      ?git merge %(branch)
+bind diff    M      ?git merge %(branch)
+bind refs    M      ?git merge %(branch)
